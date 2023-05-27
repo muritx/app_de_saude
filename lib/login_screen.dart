@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'forget_password.dart';
 import 'reclame_screen.dart';
+import 'scr_main_menu.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -216,19 +217,22 @@ Padding campoForm(TextEditingController textEditingController,
     padding: const EdgeInsets.fromLTRB(40, 8, 40, 8),
     child: TextFormField(
       validator: (String? value) {
-
-        //Validador de campo vazio
+        // Validador de campo vazio
         if (value != null && value.isEmpty) {
           return 'O campo não pode estar vazio!';
         }
 
         // Validador de email
-        if (tipoTeclado == TextInputType.emailAddress && value != null && !isValidEmail(value)) {
+        if (tipoTeclado == TextInputType.emailAddress &&
+            value != null &&
+            !isValidEmail(value)) {
           return 'Digite um email válido!';
         }
 
         // Validador de nome completo
-        if (tipoTeclado == TextInputType.name && value != null && !hasMultipleWords(value)) {
+        if (tipoTeclado == TextInputType.name &&
+            value != null &&
+            !hasMultipleWords(value)) {
           return 'Digite o nome completo!';
         }
 
@@ -276,16 +280,19 @@ Padding botaoSubmit(
       child: ElevatedButton(
         onPressed: () {
           if (formKey.currentState!.validate()) {
-            print('Adicionado!');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ScrMainMenu(),
+              ),
+            );
           }
         },
-        style: ButtonStyle(
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18.0),
-            ),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
           ),
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.indigo),
+          primary: Colors.indigo,
         ),
         child: Text(
           textoBotao,

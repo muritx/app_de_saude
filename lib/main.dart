@@ -1,5 +1,7 @@
 import 'package:app_de_saude/forget_password.dart';
-import 'package:app_de_saude/reclame_screen.dart';
+import 'package:app_de_saude/forget_password.dart';
+import 'package:app_de_saude/scr_main_menu.dart';
+import 'package:app_de_saude/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
