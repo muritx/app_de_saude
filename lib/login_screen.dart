@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'forget_password.dart';
+import 'reclame_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -33,18 +35,31 @@ class _LoginScreenState extends State<LoginScreen> {
                     campoForm(passwordController, TextInputType.text, true,
                         'Informe sua senha'),
                     botaoSubmit(context, _formKey, 'Entrar'),
-                    Text(
-                      'Esqueci a senha',
-                      style: GoogleFonts.openSans(
-                        fontSize: 14,
-                        color: Colors.white,
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ForgetPasswordScreen(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Esqueci a senha',
+                          style: GoogleFonts.openSans(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
                 Column(
                   children: [
-                    linkCadastreSe(),
+                    linkCadastreSe(context),
                     footer(),
                   ],
                 ),
@@ -57,29 +72,39 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-Column linkCadastreSe() {
-  return Column(
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Não tem conta? ',
-            style: GoogleFonts.openSans(
-              color: Colors.white,
+GestureDetector linkCadastreSe(BuildContext context) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SignUpScreen(),
+        ),
+      );
+    },
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Não tem conta? ',
+              style: GoogleFonts.openSans(
+                color: Colors.white,
+              ),
             ),
-          ),
-          Text(
-            'Cadastre-se',
-            style: GoogleFonts.openSans(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+            Text(
+              'Cadastre-se',
+              style: GoogleFonts.openSans(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
-      ),
-    ],
+          ],
+        ),
+      ],
+    ),
   );
 }
 

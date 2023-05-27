@@ -44,9 +44,29 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     campoForm(emailController, TextInputType.text, false,
                         'Informe CPF, Matrícula ou E-mail'),
                     botaoSubmit(context,_formKey,'Esqueceu a senha'),
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Voltar',
+                          style: GoogleFonts.openSans(
+                            fontSize: 14,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                linkCadastreSe(),
+                linkCadastreSe(context),
               ],
             ),
           ),

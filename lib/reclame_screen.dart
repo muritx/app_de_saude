@@ -71,12 +71,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             color: Colors.white,
                           ),
                         ),
-                        Text(
-                          'Faça login',
-                          style: GoogleFonts.openSans(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Faça login',
+                            style: GoogleFonts.openSans(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ],
