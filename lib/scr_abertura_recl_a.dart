@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_main_menu.dart';
+import 'package:app_de_saude/scr_abertura_recl_b.dart';
 
 class ScrAberturaRecl extends StatefulWidget {
   const ScrAberturaRecl({Key? key}) : super(key: key);
@@ -10,6 +11,8 @@ class ScrAberturaRecl extends StatefulWidget {
 }
 
 class _ScrAberturaReclState extends State<ScrAberturaRecl> {
+  int tipo_abertura = -1; // Valor inicial para a variável tipo_abertura
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -90,12 +93,15 @@ class _ScrAberturaReclState extends State<ScrAberturaRecl> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'Nova Reclamação',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      'Nova Reclamação',
+                      style: TextStyle(
+                        fontSize: 50,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   SizedBox(height: 40),
@@ -115,10 +121,25 @@ class _ScrAberturaReclState extends State<ScrAberturaRecl> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          // todo
+                          setState(() {
+                            tipo_abertura = 0; // Definir o valor 0 para tipo_abertura
+                          });
+                          print('tipo_abertura: $tipo_abertura'); // Imprimir o valor de tipo_abertura
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ScrAberturaReclB(),
+                            ),
+                          );
                         },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.white),
+                          fixedSize: MaterialStateProperty.all(Size.fromHeight(60)),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0),
+                            ),
+                          ),
                         ),
                         child: Text(
                           'Sim, envie meus dados pessoais',
@@ -131,10 +152,25 @@ class _ScrAberturaReclState extends State<ScrAberturaRecl> {
                       SizedBox(height: 50),
                       ElevatedButton(
                         onPressed: () {
-                          // todo
+                          setState(() {
+                            tipo_abertura = 1; // Definir o valor 1 para tipo_abertura
+                          });
+                          print('tipo_abertura: $tipo_abertura'); // Imprimir o valor de tipo_abertura
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ScrAberturaReclB(),
+                            ),
+                          );
                         },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.white),
+                          fixedSize: MaterialStateProperty.all(Size.fromHeight(60)),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(0),
+                            ),
+                          ),
                         ),
                         child: Text(
                           'Não, quero seguir anonimamente',

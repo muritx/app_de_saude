@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app_de_saude/login_screen.dart';
-import 'package:app_de_saude/scr_abertura_recl.dart';
+import 'package:app_de_saude/scr_abertura_recl_a.dart';
 
 class ScrMainMenu extends StatefulWidget {
   const ScrMainMenu({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
   // Simulação de dados do banco de dados
   final List<Item> items = [
     Item(
-      id: '1',
+      id: 'KPK 1385 XS F',
       descricao: 'Descrição do Item 1',
       status: 'Aberto',
       severidade: 'Alta',
@@ -24,7 +24,7 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
       diasAberto: '4',
     ),
     Item(
-      id: '2',
+      id: 'WPH 7924 JU C',
       descricao: 'Descrição do Item 2',
       status: 'Fechado',
       severidade: 'Baixa',
@@ -33,7 +33,7 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
       diasAberto: '1',
     ),
     Item(
-      id: '3',
+      id: 'LZH 0962 ZN R',
       descricao: 'Descrição do Item 3',
       status: 'Aberto',
       severidade: 'Média',
@@ -42,7 +42,7 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
       diasAberto: 'Atual',
     ),
     Item(
-      id: '4',
+      id: 'RHX 7969 IH T',
       descricao: 'Descrição do Item 4',
       status: 'Fechado',
       severidade: 'Alta',
@@ -51,7 +51,7 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
       diasAberto: '2',
     ),
     Item(
-      id: '5',
+      id: 'ZZY 3732 QA P',
       descricao: 'Descrição do Item 5',
       status: 'Aberto',
       severidade: 'Baixa',
@@ -60,7 +60,7 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
       diasAberto: 'Atual',
     ),
     Item(
-      id: '6',
+      id: 'XMC 6350 OI T',
       descricao: 'Descrição do Item 6',
       status: 'Aberto',
       severidade: 'Média',
@@ -69,7 +69,7 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
       diasAberto: 'Atual',
     ),
     Item(
-      id: '7',
+      id: 'RAC 6352 NL N',
       descricao: 'Descrição do Item 7',
       status: 'Aberto',
       severidade: 'Baixa',
@@ -78,7 +78,7 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
       diasAberto: 'Atual',
     ),
     Item(
-      id: '8',
+      id: 'YIF 5975 BL Y',
       descricao: 'Descrição do Item 8',
       status: 'Fechado',
       severidade: 'Alta',
