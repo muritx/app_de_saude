@@ -11,7 +11,7 @@ class ScrAberturaRecl extends StatefulWidget {
 }
 
 class _ScrAberturaReclState extends State<ScrAberturaRecl> {
-  int tipo_abertura = -1; // Valor inicial para a variável tipo_abertura
+  int tipo_abertura = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -122,13 +122,13 @@ class _ScrAberturaReclState extends State<ScrAberturaRecl> {
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            tipo_abertura = 0; // Definir o valor 0 para tipo_abertura
+                            tipo_abertura = 0;
                           });
-                          print('tipo_abertura: $tipo_abertura'); // Imprimir o valor de tipo_abertura
+                          print('tipo_abertura: $tipo_abertura');
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ScrAberturaReclB(),
+                              builder: (context) => ScrAberturaReclB(tipoAbertura: tipo_abertura),
                             ),
                           );
                         },
@@ -153,13 +153,13 @@ class _ScrAberturaReclState extends State<ScrAberturaRecl> {
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            tipo_abertura = 1; // Definir o valor 1 para tipo_abertura
+                            tipo_abertura = 1;
                           });
-                          print('tipo_abertura: $tipo_abertura'); // Imprimir o valor de tipo_abertura
+                          print('tipo_abertura: $tipo_abertura');
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ScrAberturaReclB(),
+                              builder: (context) => ScrAberturaReclB(tipoAbertura: tipo_abertura),
                             ),
                           );
                         },

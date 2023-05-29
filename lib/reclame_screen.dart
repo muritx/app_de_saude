@@ -1,6 +1,7 @@
 import 'package:app_de_saude/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:app_de_saude/scr_cadastro_cidadao.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -57,8 +58,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         'E-mail'),
                     campoForm(
                         passwordController, TextInputType.text, true, 'Senha'),
-                    botaoSubmit(context, _formKey, 'Cadastre-se'),
                   ],
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ScrCadastroCidadao(
+                            nome: nameController.text,
+                            email: emailController.text,
+                            senha: passwordController.text,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                    fixedSize: MaterialStateProperty.all(Size.fromHeight(60)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'Cadastre-se',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ),
                 Column(
                   children: [

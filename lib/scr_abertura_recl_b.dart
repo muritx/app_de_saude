@@ -4,7 +4,9 @@ import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_main_menu.dart';
 
 class ScrAberturaReclB extends StatefulWidget {
-  const ScrAberturaReclB({Key? key}) : super(key: key);
+  const ScrAberturaReclB({Key? key, required this.tipoAbertura}) : super(key: key);
+
+  final int tipoAbertura;
 
   @override
   State<ScrAberturaReclB> createState() => _ScrAberturaReclBState();
@@ -32,7 +34,7 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
   String? selectedTipoServico;
   String? selectedEmpresaTerceirizada;
 
-  bool showError = false; // Variável para controlar a exibição do erro
+  bool showError = false;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +111,7 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
         body: SafeArea(
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Colors.blue, // Cor de fundo desejada para as margens
+              color: Colors.blue,
             ),
             child: Container(
               margin: EdgeInsets.all(40),
@@ -284,18 +286,21 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
-                          // Verificar se todos os campos foram selecionados
                           if (selectedSecretaria == null ||
                               selectedTipoServico == null ||
                               selectedEmpresaTerceirizada == null) {
-                            showError = true; // Exibir erro se algum campo estiver faltando
+                            showError = true;
                           } else {
-                            showError = false; // Esconder erro se todos os campos estiverem preenchidos
-                            printSelectedValues();
+                            showError = false;
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ScrAberturaReclC(),
+                                builder: (context) => ScrAberturaReclC(
+                                  selectedSecretaria: selectedSecretaria!,
+                                  selectedTipoServico: selectedTipoServico!,
+                                  selectedEmpresaTerceirizada: selectedEmpresaTerceirizada!,
+                                  tipoAbertura: widget.tipoAbertura!,
+                                ),
                               ),
                             );
                           }
@@ -326,11 +331,6 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
         ),
       ),
     );
-  }
-  void printSelectedValues() {
-    print('selecionado secretaria $selectedSecretaria');
-    print('selecionado tipo serviço $selectedTipoServico');
-    print('selecionado empresa terceirizada $selectedEmpresaTerceirizada');
   }
 }
 

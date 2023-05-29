@@ -4,7 +4,19 @@ import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_main_menu.dart';
 
 class ScrAberturaReclC extends StatefulWidget {
-  const ScrAberturaReclC({Key? key}) : super(key: key);
+
+  const ScrAberturaReclC(
+      {Key? key,
+      required this.tipoAbertura,
+      required this.selectedSecretaria,
+      required this.selectedTipoServico,
+      required this.selectedEmpresaTerceirizada})
+      : super(key: key);
+
+  final String selectedSecretaria;
+  final String selectedTipoServico;
+  final String selectedEmpresaTerceirizada;
+  final int tipoAbertura;
 
   @override
   State<ScrAberturaReclC> createState() => _ScrAberturaReclCState();
@@ -16,7 +28,7 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
   DateTime? dataOcorrido;
   String? arquivoAnexado;
 
-  bool showError = false; // Variável para controlar a exibição do erro
+  bool showError = false;
 
   @override
   Widget build(BuildContext context) {
@@ -93,13 +105,13 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
         body: SafeArea(
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Colors.blue, // Cor de fundo desejada para as margens
+              color: Colors.blue,
             ),
             child: Container(
               margin: EdgeInsets.all(40),
               color: Colors.blue,
               child: Center(
-                child: SingleChildScrollView( // Adicionado SingleChildScrollView para permitir a rolagem vertical
+                child: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -133,14 +145,19 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(0),
                           border: Border.all(
-                            color: showError && (titulo == null || titulo!.length > 100) ? Colors.red : Colors.transparent,
+                            color: showError &&
+                                    (titulo == null || titulo!.length > 100)
+                                ? Colors.red
+                                : Colors.transparent,
                             width: 2,
                           ),
                         ),
                         child: TextField(
                           onChanged: (value) {
                             setState(() {
-                              titulo = value.length <= 100 ? value : value.substring(0, 100);
+                              titulo = value.length <= 100
+                                  ? value
+                                  : value.substring(0, 100);
                             });
                           },
                           maxLength: 100,
@@ -157,7 +174,9 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'Obrigatório e deve conter no máximo 100 caracteres',
-                              style: TextStyle(color: Colors.white, backgroundColor: Colors.red),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  backgroundColor: Colors.red),
                             ),
                           ),
                         ),
@@ -179,32 +198,42 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(0),
                           border: Border.all(
-                            color: showError && (descricao == null || descricao!.length > 700) ? Colors.red : Colors.transparent,
+                            color: showError &&
+                                    (descricao == null ||
+                                        descricao!.length > 700)
+                                ? Colors.red
+                                : Colors.transparent,
                             width: 2,
                           ),
                         ),
                         child: TextField(
                           onChanged: (value) {
                             setState(() {
-                              descricao = value.length <= 700 ? value : value.substring(0, 700);
+                              descricao = value.length <= 700
+                                  ? value
+                                  : value.substring(0, 700);
                             });
                           },
                           maxLength: 700,
                           maxLines: 8,
                           decoration: InputDecoration(
-                            hintText: 'Detalhe um pouco sobre o que tem para reclamar',
+                            hintText:
+                                'Detalhe um pouco sobre o que tem para reclamar',
                             border: InputBorder.none,
                           ),
                         ),
                       ),
-                      if (showError && (descricao == null || descricao!.length > 700))
+                      if (showError &&
+                          (descricao == null || descricao!.length > 700))
                         Padding(
                           padding: EdgeInsets.only(left: 0),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'Obrigatório e deve conter no máximo 700 caracteres',
-                              style: TextStyle(color: Colors.white, backgroundColor: Colors.red),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  backgroundColor: Colors.red),
                             ),
                           ),
                         ),
@@ -226,7 +255,9 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(0),
                           border: Border.all(
-                            color: showError && dataOcorrido == null ? Colors.red : Colors.transparent,
+                            color: showError && dataOcorrido == null
+                                ? Colors.red
+                                : Colors.transparent,
                             width: 2,
                           ),
                         ),
@@ -249,8 +280,13 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                               children: [
                                 Icon(Icons.calendar_today),
                                 Text(
-                                  dataOcorrido != null ? formatDate(dataOcorrido!) : 'Selecione a data',
-                                  style: TextStyle(color: dataOcorrido != null ? Colors.black : Colors.grey),
+                                  dataOcorrido != null
+                                      ? formatDate(dataOcorrido!)
+                                      : 'Selecione a data',
+                                  style: TextStyle(
+                                      color: dataOcorrido != null
+                                          ? Colors.black
+                                          : Colors.grey),
                                 ),
                               ],
                             ),
@@ -264,7 +300,9 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'Obrigatório',
-                              style: TextStyle(color: Colors.white, backgroundColor: Colors.red),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  backgroundColor: Colors.red),
                             ),
                           ),
                         ),
@@ -273,7 +311,6 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                         padding: EdgeInsets.only(top: 20, bottom: 10),
                         child: InkWell(
                           onTap: () {
-                            // Implementar ação de anexar documento
                             print('Anexar documento');
                           },
                           child: Container(
@@ -299,25 +336,41 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            // Verificar se todos os campos foram preenchidos
-                            if (titulo == null || descricao == null || dataOcorrido == null) {
-                              showError = true; // Exibir erro se algum campo estiver faltando
+                            if (titulo == null ||
+                                descricao == null ||
+                                dataOcorrido == null) {
+                              showError =
+                                  true;
                             } else {
-                              showError = false; // Esconder erro se todos os campos estiverem preenchidos
-                              printSelectedValues();
+                              showError =
+                                  false;
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ScrAberturaReclD(),
+                                  builder: (context) => ScrAberturaReclD(
+                                    titulo: titulo!,
+                                    descricao: descricao!,
+                                    data: dataOcorrido!,
+                                    selectedSecretaria:
+                                        widget.selectedSecretaria!,
+                                    selectedTipoServico:
+                                        widget.selectedTipoServico!,
+                                    selectedEmpresaTerceirizada:
+                                        widget.selectedEmpresaTerceirizada!,
+                                    tipoAbertura: widget.tipoAbertura!,
+                                  ),
                                 ),
                               );
                             }
                           });
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors.white),
-                          fixedSize: MaterialStateProperty.all(Size.fromHeight(60)),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                          fixedSize:
+                              MaterialStateProperty.all(Size.fromHeight(60)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(2),
                             ),
@@ -344,11 +397,5 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
 
   String formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year.toString()}';
-  }
-
-  void printSelectedValues() {
-    print('titulo $titulo');
-    print('descricao $descricao');
-    print('data ${formatDate(dataOcorrido!)}');
   }
 }

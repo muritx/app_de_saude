@@ -1,11 +1,28 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:app_de_saude/scr_abertura_recl_d.dart';
+import 'package:app_de_saude/scr_abertura_recl_c.dart';
 import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_main_menu.dart';
 
 class ScrAberturaReclD extends StatefulWidget {
-  const ScrAberturaReclD({Key? key}) : super(key: key);
+  const ScrAberturaReclD({
+    Key? key,
+    required this.tipoAbertura,
+    required this.selectedSecretaria,
+    required this.selectedTipoServico,
+    required this.selectedEmpresaTerceirizada,
+    required this.titulo,
+    required this.descricao,
+    required this.data,
+  }) : super(key: key);
+
+  final int tipoAbertura;
+  final String selectedSecretaria;
+  final String selectedTipoServico;
+  final String selectedEmpresaTerceirizada;
+  final String titulo;
+  final String descricao;
+  final DateTime data;
 
   @override
   State<ScrAberturaReclD> createState() => _ScrAberturaReclDState();
@@ -98,13 +115,13 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
         body: SafeArea(
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Colors.blue, // Cor de fundo desejada para as margens
+              color: Colors.blue,
             ),
             child: Container(
               margin: EdgeInsets.all(40),
               color: Colors.blue,
               child: Center(
-                child: SingleChildScrollView( // Adicionado SingleChildScrollView para permitir a rolagem vertical
+                child: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -123,7 +140,8 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
                       SizedBox(height: 10),
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(0),
@@ -156,9 +174,12 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
                           });
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors.white),
-                          fixedSize: MaterialStateProperty.all(Size.fromHeight(60)),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                          fixedSize:
+                              MaterialStateProperty.all(Size.fromHeight(60)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(2),
                             ),
@@ -184,7 +205,16 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
   }
 
   void printSelectedValues() {
-    print(id_reclamacao);
+    print('');
+    print('DDDDDDDDDDDDD');
+    print('id reclamacao: ${id_reclamacao}');
+    print('tipoAbertura: ${widget.tipoAbertura}');
+    print('selectedSecretaria: ${widget.selectedSecretaria}');
+    print('selectedTipoServico: ${widget.selectedTipoServico}');
+    print('selectedEmpresaTerceirizada: ${widget.selectedEmpresaTerceirizada}');
+    print('titulo: ${widget.titulo}');
+    print('descricao: ${widget.descricao}');
+    print('data: ${widget.data}');
   }
 
   String generateRandomID() {
