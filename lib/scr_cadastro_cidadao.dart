@@ -79,6 +79,10 @@ class _ScrCadastroCidadaoState extends State<ScrCadastroCidadao> {
     String cidade = cidadeController.text;
     String estado = estadoController.text;
 
+    print('');
+    print('Retorno Cadastro de Usuario Cidadao');
+    print('');
+
     print('Nome: ${widget.nome}');
     print('Email: ${widget.email}');
     print('Senha: ${widget.senha}');

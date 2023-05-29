@@ -206,7 +206,8 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
 
   void printSelectedValues() {
     print('');
-    print('DDDDDDDDDDDDD');
+    print('Retorno Cadastro de Reclamacao');
+    print('');
     print('id reclamacao: ${id_reclamacao}');
     print('tipoAbertura: ${widget.tipoAbertura}');
     print('selectedSecretaria: ${widget.selectedSecretaria}');
