@@ -352,7 +352,7 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                                   builder: (context) => ScrAberturaReclD(
                                     titulo: titulo!,
                                     descricao: descricao!,
-                                    data: dataOcorrido!,
+                                    dataOcorrido: dataOcorrido!,
                                     selectedSecretaria:
                                         widget.selectedSecretaria!,
                                     selectedUnidades:

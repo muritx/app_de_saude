@@ -13,7 +13,7 @@ class ScrAberturaReclD extends StatefulWidget {
     required this.selectedEmpresaTerceirizada,
     required this.titulo,
     required this.descricao,
-    required this.data,
+    required this.dataOcorrido,
   }) : super(key: key);
 
   final int? tipoAbertura;
@@ -23,7 +23,7 @@ class ScrAberturaReclD extends StatefulWidget {
   final String? selectedEmpresaTerceirizada;
   final String? titulo;
   final String? descricao;
-  final DateTime? data;
+  final DateTime? dataOcorrido;
 
   @override
   State<ScrAberturaReclD> createState() => _ScrAberturaReclDState();
@@ -33,6 +33,7 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
   bool showError = false;
 
   late String id_reclamacao;
+  DateTime dataAberturaRecl = DateTime.now();
 
   @override
   void initState() {
@@ -229,7 +230,8 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
     print('selectedEmpresaTerceirizada: ${widget.selectedEmpresaTerceirizada}');
     print('titulo: ${widget.titulo}');
     print('descricao: ${widget.descricao}');
-    print('data: ${widget.data}');
+    print('dataOcorrido: ${widget.dataOcorrido}');
+    print('dataAberturaRecl: ${dataAberturaRecl}');
   }
 
   String generateRandomID() {
