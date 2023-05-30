@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:app_de_saude/scr_abertura_recl_c.dart';
 import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_main_menu.dart';
 
@@ -9,6 +8,7 @@ class ScrAberturaReclD extends StatefulWidget {
     Key? key,
     required this.tipoAbertura,
     required this.selectedSecretaria,
+    required this.selectedUnidades,
     required this.selectedTipoServico,
     required this.selectedEmpresaTerceirizada,
     required this.titulo,
@@ -16,13 +16,14 @@ class ScrAberturaReclD extends StatefulWidget {
     required this.data,
   }) : super(key: key);
 
-  final int tipoAbertura;
-  final String selectedSecretaria;
-  final String selectedTipoServico;
-  final String selectedEmpresaTerceirizada;
-  final String titulo;
-  final String descricao;
-  final DateTime data;
+  final int? tipoAbertura;
+  final String? selectedSecretaria;
+  final String? selectedUnidades;
+  final String? selectedTipoServico;
+  final String? selectedEmpresaTerceirizada;
+  final String? titulo;
+  final String? descricao;
+  final DateTime? data;
 
   @override
   State<ScrAberturaReclD> createState() => _ScrAberturaReclDState();
@@ -129,7 +130,7 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
                       Padding(
                         padding: EdgeInsets.only(bottom: 5),
                         child: Text(
-                          'Nova Reclamação',
+                          'Reclamação Aberta!',
                           style: TextStyle(
                             fontSize: 50,
                             color: Colors.white,
@@ -137,7 +138,19 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 80),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 5),
+                        child: Text(
+                          'Este identificador da sua eeclamação:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5),
                       Container(
                         width: double.infinity,
                         padding:
@@ -161,7 +174,7 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 100),
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
@@ -175,13 +188,13 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.white),
+                              MaterialStateProperty.all(Colors.green[700]),
                           fixedSize:
                               MaterialStateProperty.all(Size.fromHeight(60)),
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(2),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                         ),
@@ -189,7 +202,7 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
                           'Finalizar',
                           style: TextStyle(
                             fontSize: 18,
-                            color: Colors.blue,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -211,6 +224,7 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
     print('id reclamacao: ${id_reclamacao}');
     print('tipoAbertura: ${widget.tipoAbertura}');
     print('selectedSecretaria: ${widget.selectedSecretaria}');
+    print('selectedUnidades: ${widget.selectedUnidades}');
     print('selectedTipoServico: ${widget.selectedTipoServico}');
     print('selectedEmpresaTerceirizada: ${widget.selectedEmpresaTerceirizada}');
     print('titulo: ${widget.titulo}');

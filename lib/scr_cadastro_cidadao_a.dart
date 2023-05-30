@@ -4,10 +4,10 @@ import 'package:app_de_saude/scr_main_menu.dart';
 import 'package:app_de_saude/scr_cadastro_cidadao_b.dart';
 
 class ScrCadastroCidadaoA extends StatefulWidget {
-  final int tipoUser;
-  final String nome;
-  final String email;
-  final String senha;
+  final int? tipoUser;
+  final String? nome;
+  final String? email;
+  final String? senha;
 
   const ScrCadastroCidadaoA({
     Key? key,

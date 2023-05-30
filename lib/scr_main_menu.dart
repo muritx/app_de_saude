@@ -10,7 +10,7 @@ class ScrMainMenu extends StatefulWidget {
 }
 
 class _ScrMainMenuState extends State<ScrMainMenu> {
-  final String nome = 'Teste'; // Variável que recebe nomes
+  final String? nome = 'Teste'; // Variável que recebe nomes
 
   // Simulação de dados do banco de dados
   final List<Item> items = [
@@ -172,7 +172,7 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
                   Padding(
                     padding: EdgeInsets.only(left: 20),
                     child: Text(
-                      'Olá, $nome!', // Utilizando a variável nome
+                      'Olá, $nome!',
                       style: TextStyle(
                         fontSize: 30,
                         color: Colors.white,
@@ -208,7 +208,7 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
                       },
                     ),
                   ),
-                  SizedBox(height: 30), // Adiciona uma margem no final da página
+                  SizedBox(height: 30),
                 ],
               ),
             ),
@@ -284,13 +284,13 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
 }
 
 class Item {
-  final String id;
-  final String descricao;
-  final String status;
-  final String severidade;
-  final String dataAbertura;
-  final String dataConclusao;
-  final String diasAberto;
+  final String? id;
+  final String? descricao;
+  final String? status;
+  final String? severidade;
+  final String? dataAbertura;
+  final String? dataConclusao;
+  final String? diasAberto;
 
   Item({
     required this.id,

@@ -10,13 +10,15 @@ class ScrAberturaReclC extends StatefulWidget {
       required this.tipoAbertura,
       required this.selectedSecretaria,
       required this.selectedTipoServico,
-      required this.selectedEmpresaTerceirizada})
+      required this.selectedEmpresaTerceirizada,
+      required this.selectedUnidades})
       : super(key: key);
 
-  final String selectedSecretaria;
-  final String selectedTipoServico;
-  final String selectedEmpresaTerceirizada;
-  final int tipoAbertura;
+  final String? selectedSecretaria;
+  final String? selectedUnidades;
+  final String? selectedTipoServico;
+  final String? selectedEmpresaTerceirizada;
+  final int? tipoAbertura;
 
   @override
   State<ScrAberturaReclC> createState() => _ScrAberturaReclCState();
@@ -353,6 +355,8 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                                     data: dataOcorrido!,
                                     selectedSecretaria:
                                         widget.selectedSecretaria!,
+                                    selectedUnidades:
+                                        widget.selectedUnidades!,
                                     selectedTipoServico:
                                         widget.selectedTipoServico!,
                                     selectedEmpresaTerceirizada:

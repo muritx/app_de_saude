@@ -6,7 +6,7 @@ import 'package:app_de_saude/scr_main_menu.dart';
 class ScrAberturaReclB extends StatefulWidget {
   const ScrAberturaReclB({Key? key, required this.tipoAbertura}) : super(key: key);
 
-  final int tipoAbertura;
+  final int? tipoAbertura;
 
   @override
   State<ScrAberturaReclB> createState() => _ScrAberturaReclBState();
@@ -15,6 +15,12 @@ class ScrAberturaReclB extends StatefulWidget {
 class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
   List<String> secretarias = [
     'Secretaria Estadual de Saúde - PE',
+    'Outros',
+  ];
+
+  List<String> unidades = [
+    'UPAe Limoeiro',
+    'UPA São Lourenço da Mata - Professor Fernando Figueira',
     'Outros',
   ];
 
@@ -31,6 +37,7 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
   ];
 
   String? selectedSecretaria;
+  String? selectedUnidades;
   String? selectedTipoServico;
   String? selectedEmpresaTerceirizada;
 
@@ -186,6 +193,56 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                     Padding(
                       padding: EdgeInsets.only(top: 20, bottom: 20),
                       child: Text(
+                        'Qual a Unidade de Saúde está relacionada?',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(0),
+                        border: Border.all(
+                          color: showError && selectedUnidades == null ? Colors.red : Colors.transparent,
+                          width: 2,
+                        ),
+                      ),
+                      child: DropdownButton<String>(
+                        value: selectedUnidades,
+                        isExpanded: true,
+                        underline: Container(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedUnidades = newValue;
+                          });
+                        },
+                        items: unidades.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    if (showError && selectedUnidades == null)
+                      Padding(
+                        padding: EdgeInsets.only(left: 0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Obrigatório',
+                            style: TextStyle(color: Colors.white, backgroundColor: Colors.red),
+                          ),
+                        ),
+                      ),
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20, bottom: 20),
+                      child: Text(
                         'Sua reclamação está relacionada a qual tipo de serviço?',
                         style: TextStyle(
                           fontSize: 15,
@@ -287,6 +344,7 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                       onPressed: () {
                         setState(() {
                           if (selectedSecretaria == null ||
+                              selectedUnidades == null ||
                               selectedTipoServico == null ||
                               selectedEmpresaTerceirizada == null) {
                             showError = true;
@@ -297,6 +355,7 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                               MaterialPageRoute(
                                 builder: (context) => ScrAberturaReclC(
                                   selectedSecretaria: selectedSecretaria!,
+                                  selectedUnidades: selectedUnidades!,
                                   selectedTipoServico: selectedTipoServico!,
                                   selectedEmpresaTerceirizada: selectedEmpresaTerceirizada!,
                                   tipoAbertura: widget.tipoAbertura!,
