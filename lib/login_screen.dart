@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'forget_password.dart';
@@ -12,10 +13,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  final _firebaseAuth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +34,30 @@ class _LoginScreenState extends State<LoginScreen> {
                 Column(
                   children: [
                     campoForm(emailController, TextInputType.text, false,
-                        'Informe CPF, Matrícula ou E-mail'),
+                        'Informe E-mail'),
                     campoForm(passwordController, TextInputType.text, true,
                         'Informe sua senha'),
-                    botaoSubmit(context, _formKey, 'Entrar'),
+                    //botaoSubmit(context, _formKey, 'Entrar', login()),
+                    SizedBox(height: 15),
+                    ElevatedButton(
+                      onPressed: () {
+                        login();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.indigo, // Cor de fundo do botão
+                        onPrimary: Colors.white, // Cor do texto do botão
+                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16), // Espaçamento interno do botão
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10), // Borda arredondada do botão
+                        ),
+                        textStyle: TextStyle(
+                          fontSize: 18, // Tamanho do texto do botão
+                          fontWeight: FontWeight.bold, // Peso da fonte do texto
+                        ),
+                      ),
+                      child: Text('Entrar'),
+                    ),
+                    SizedBox(height: 15),
                     MouseRegion(
                       cursor: SystemMouseCursors.click,
                       child: GestureDetector(
@@ -71,6 +93,115 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  login() async {
+    try{
+      UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
+      if(userCredential != null){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ScrMainMenu(),
+          ),
+        );
+      }
+    }on FirebaseAuthException catch(erro){
+      print(erro.hashCode);
+      print(erro);
+      if(erro.hashCode == 97258406){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Usuário Inexiste',
+              style: TextStyle(
+                fontSize: 16, // Tamanho da fonte da mensagem
+                color: Colors.white, // Cor do texto da mensagem
+              ),
+            ),
+            backgroundColor: Colors.red, // Cor de fundo do SnackBar
+            duration: Duration(seconds: 3), // Duração de exibição do SnackBar
+            behavior: SnackBarBehavior.floating, // Comportamento do SnackBar
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // Borda arredondada do SnackBar
+            ),
+          ),
+        );
+      }else if(erro.hashCode == 276186007){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Informe a Senha',
+              style: TextStyle(
+                fontSize: 16, // Tamanho da fonte da mensagem
+                color: Colors.white, // Cor do texto da mensagem
+              ),
+            ),
+            backgroundColor: Colors.red, // Cor de fundo do SnackBar
+            duration: Duration(seconds: 3), // Duração de exibição do SnackBar
+            behavior: SnackBarBehavior.floating, // Comportamento do SnackBar
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // Borda arredondada do SnackBar
+            ),
+          ),
+        );
+      }else if(erro.hashCode == 505314357){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Senha Inválida',
+              style: TextStyle(
+                fontSize: 16, // Tamanho da fonte da mensagem
+                color: Colors.white, // Cor do texto da mensagem
+              ),
+            ),
+            backgroundColor: Colors.red, // Cor de fundo do SnackBar
+            duration: Duration(seconds: 3), // Duração de exibição do SnackBar
+            behavior: SnackBarBehavior.floating, // Comportamento do SnackBar
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // Borda arredondada do SnackBar
+            ),
+          ),
+        );
+      }else if(erro.hashCode == 276948968){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Informe o Email',
+              style: TextStyle(
+                fontSize: 16, // Tamanho da fonte da mensagem
+                color: Colors.white, // Cor do texto da mensagem
+              ),
+            ),
+            backgroundColor: Colors.red, // Cor de fundo do SnackBar
+            duration: Duration(seconds: 3), // Duração de exibição do SnackBar
+            behavior: SnackBarBehavior.floating, // Comportamento do SnackBar
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // Borda arredondada do SnackBar
+            ),
+          ),
+        );
+      }else if(erro.hashCode == 121129892){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Usuário Bloqueado! Tente novamente mais tarde ou contate o administrador.',
+              style: TextStyle(
+                fontSize: 12, // Tamanho da fonte da mensagem
+                color: Colors.white, // Cor do texto da mensagem
+              ),
+            ),
+            backgroundColor: Colors.red, // Cor de fundo do SnackBar
+            duration: Duration(seconds: 3), // Duração de exibição do SnackBar
+            behavior: SnackBarBehavior.floating, // Comportamento do SnackBar
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // Borda arredondada do SnackBar
+            ),
+          ),
+        );
+      }
+    }
+  }
+
 }
 
 GestureDetector linkCadastreSe(BuildContext context) {
@@ -272,7 +403,7 @@ bool hasMultipleWords(String name) {
 }
 
 Padding botaoSubmit(
-    BuildContext context, GlobalKey<FormState> formKey, String textoBotao) {
+    BuildContext context, GlobalKey<FormState> formKey, String textoBotao, login()) {
   return Padding(
     padding: const EdgeInsets.fromLTRB(40, 8, 40, 8),
     child: SizedBox(

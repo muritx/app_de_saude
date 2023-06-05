@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_main_menu.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ScrAberturaReclD extends StatefulWidget {
   const ScrAberturaReclD({
@@ -29,6 +31,9 @@ class ScrAberturaReclD extends StatefulWidget {
   State<ScrAberturaReclD> createState() => _ScrAberturaReclDState();
 }
 
+final String collectionName = 'cadastro_reclamacao';
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
 class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
   bool showError = false;
 
@@ -40,6 +45,43 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
     super.initState();
     id_reclamacao = generateRandomID();
     printSelectedValues();
+  }
+
+  void uidUsuario() async {
+    // Resto do código...
+
+    // Obter o UID do usuário atual se o tipo de abertura for igual a 0
+    String? uidAbertura;
+    String? emailAbertura;
+    if (widget.tipoAbertura == 0) {
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      uidAbertura = currentUser?.uid;
+      emailAbertura = currentUser?.email;
+    }
+
+    // Resto do código...
+
+    _firestore
+        .collection(collectionName)
+        .where('codigoRecl', isEqualTo: id_reclamacao)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      if (querySnapshot.docs.isNotEmpty) {
+        var document = querySnapshot.docs.first;
+        document.reference.update({
+          'uidAbertura': uidAbertura,
+          'emailAbertura': emailAbertura,
+        }).then((value) {
+          print('Dados atualizados com sucesso no Firebase!');
+        }).catchError((error) {
+          print('Erro ao atualizar dados no Firebase: $error');
+        });
+      } else {
+        print('Documento não encontrado com o códigoRecl: $id_reclamacao');
+      }
+    }).catchError((error) {
+      print('Erro ao obter documento no Firebase: $error');
+    });
   }
 
   @override
@@ -120,7 +162,7 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
               color: Colors.blue,
             ),
             child: Container(
-              margin: EdgeInsets.all(40),
+              margin: EdgeInsets.all(50),
               color: Colors.blue,
               child: Center(
                 child: SingleChildScrollView(
@@ -133,10 +175,23 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
                         child: Text(
                           'Reclamação Aberta!',
                           style: TextStyle(
-                            fontSize: 50,
+                            fontSize: 40,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
+                        ),
+                      ),
+                      Container(
+                        width: 200,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(0),
+                          border: Border.all(color: Colors.white54),
+                        ),
+                        child: LinearProgressIndicator(
+                          value: 1.0,
+                          backgroundColor: Colors.white,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
                         ),
                       ),
                       SizedBox(height: 80),
@@ -232,6 +287,28 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
     print('descricao: ${widget.descricao}');
     print('dataOcorrido: ${widget.dataOcorrido}');
     print('dataAberturaRecl: ${dataAberturaRecl}');
+
+    _firestore.collection(collectionName).add({
+      'codigoRecl': id_reclamacao,
+      'tipoAbertura': widget.tipoAbertura,
+      'selectedSecretaria': widget.selectedSecretaria,
+      'selectedUnidades': widget.selectedUnidades,
+      'selectedTipoServico': widget.selectedTipoServico,
+      'selectedEmpresaTerceirizada': widget.selectedEmpresaTerceirizada,
+      'titulo': widget.titulo,
+      'descricao': widget.descricao,
+      'dataOcorrido': widget.dataOcorrido,
+      'dataAbertura': dataAberturaRecl,
+      'status': 'Aberto',
+      'severidade': 'Baixa',
+      'dataConclusao': null,
+      'diasAberto': null,
+    }).then((value) {
+      uidUsuario();
+      print('Dados armazenados com sucesso no Firebase!');
+    }).catchError((error) {
+      print('Erro ao armazenar dados no Firebase: $error');
+    });
   }
 
   String generateRandomID() {

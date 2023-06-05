@@ -1,25 +1,90 @@
+import 'package:app_de_saude/scr_cadastro_cidadao_a.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_main_menu.dart';
-import 'package:app_de_saude/scr_cadastro_cidadao_b.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class ScrCadastroOuvidor extends StatefulWidget {
   final int? tipoUser;
   final String? nome;
   final String? email;
   final String? senha;
+  final _firebaseAuth = FirebaseAuth.instance;
 
-  const ScrCadastroOuvidor({
+  ScrCadastroOuvidor({
     Key? key,
     required this.nome,
     required this.email,
     required this.senha,
     required this.tipoUser,
-  }) : super(key: key);
+  }) : super(key: key){
+    emailController.text = email ?? '';
+    passwordController.text = senha ?? '';
+  }
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   State<ScrCadastroOuvidor> createState() => _ScrCadastroOuvidorState();
+
+  cadastroUser(context) async {
+    try {
+      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      // O usuário foi criado com sucesso
+      if (userCredential != null) {
+        // Faça o que for necessário após o usuário ter sido criado
+      }
+    } on FirebaseAuthException catch (erro) {
+      print(erro);
+      // Lida com erros específicos do FirebaseAuth
+      if (erro.code == 'weak-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('A senha é muito fraca')),
+        );
+      } else if (erro.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('O email já está em uso')),
+        );
+      } else {
+        // Lida com outros erros do FirebaseAuth
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao criar usuário')),
+        );
+      }
+    } catch (erro) {
+      print(erro);
+      // Lida com outros erros não relacionados ao FirebaseAuth
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao criar usuário')),
+      );
+    }
+    try{
+      UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
+      if(userCredential != null){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ScrMainMenu(),
+          ),
+        );
+      }
+    }on FirebaseAuthException catch(erro) {
+      print(erro.hashCode);
+      print(erro);
+    }
+  }
 }
+
+final String collectionName = 'cadastro_ouvidor';
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
 class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
   String? matricula;
@@ -38,6 +103,12 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
   TextEditingController tipoServidorController = TextEditingController();
   TextEditingController dtEfetivacaoController = TextEditingController();
 
+  List<String> arrTipoContratacao = [
+    'Concursado',
+    'Comissionado',
+    'Terceirizado',
+  ];
+
   void finalizarCadastroCidadao() {
     print('');
     print('Retorno Cadastro de Usuario Cidadao');
@@ -51,6 +122,21 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
     print('TelMovel: $telMovel');
     print('TipoServidor: $tipoServidor');
     print('DtEfetivacao: $dtEfetivacao');
+
+    _firestore.collection(collectionName).add({
+      'tipoUser': widget.tipoUser,
+      'nome': widget.nome,
+      'email': widget.email,
+      'senha': widget.senha,
+      'matricula': matricula,
+      'telMovel': telMovel,
+      'tipoServidor': tipoServidor,
+      'dtEfetivacao': dtEfetivacao,
+    }).then((value) {
+      print('Dados armazenados com sucesso no Firebase!');
+    }).catchError((error) {
+      print('Erro ao armazenar dados no Firebase: $error');
+    });
   }
 
   @override
@@ -142,7 +228,7 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
                     Padding(
                       padding: EdgeInsets.only(bottom: 10),
                       child: Text(
-                        'Cadastro Cidadão',
+                        'Cadastro Ouvidor',
                         style: TextStyle(
                           fontSize: 30,
                           color: Colors.white,
@@ -150,7 +236,7 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 5),
+                    SizedBox(height: 60),
                     Padding(
                       padding: EdgeInsets.only(top: 10, bottom: 1),
                       child: Text(
@@ -219,6 +305,10 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
                         ),
                       ),
                       child: TextFormField(
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          PhoneNumberInputFormatter(),
+                        ],
                         controller: telMovelController,
                         textAlign: TextAlign.center,
                         onChanged: (value) {
@@ -244,7 +334,7 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
                     Padding(
                       padding: EdgeInsets.only(top: 10, bottom: 1),
                       child: Text(
-                        'Telefone Fixo',
+                        'Tipo de Contratação',
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.white,
@@ -258,22 +348,99 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(0),
                         border: Border.all(
-                          color: showErrorTipoServidor
-                              ? Colors.red
-                              : Colors.transparent,
+                          color: showErrorTipoServidor && tipoServidor == null ? Colors.red : Colors.transparent,
                           width: 2,
                         ),
                       ),
-                      child: TextFormField(
-                        controller: tipoServidorController,
-                        textAlign: TextAlign.center,
+                      child: DropdownButton<String>(
+                        value: tipoServidor,
+                        isExpanded: true,
+                        underline: Container(),
                         onChanged: (value) {
-                          tipoServidor = value;
-                          showErrorTipoServidor = false;
+                          setState(() {
+                            tipoServidor = value;
+                            showErrorTipoServidor = false;
+                          });
                         },
+                        items: arrTipoContratacao.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: Text(
+                                value,
+                              ),
+                            ),
+                          );
+                        }).toList(),
                       ),
                     ),
-                    if (showErrorTipoServidor)
+                    if (showErrorTipoServidor && tipoServidor == null)
+                      Padding(
+                        padding: EdgeInsets.only(left: 0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Obrigatório',
+                            style: TextStyle(color: Colors.white, backgroundColor: Colors.red),
+                          ),
+                        ),
+                      ),
+                    SizedBox(height: 5),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20, bottom: 10),
+                      child: Text(
+                        'Data do Ocorrido',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(0),
+                        border: Border.all(
+                          color: showErrorDtEfetivacao && dtEfetivacao == null ? Colors.red : Colors.transparent,
+                          width: 2,
+                        ),
+                      ),
+                      child: InkWell(
+                        onTap: () async {
+                          final DateTime? selectedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+                          setState(() {
+                            dtEfetivacao = selectedDate;
+                          });
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Icon(Icons.calendar_today),
+                              Expanded(
+                                child: Text(
+                                  dtEfetivacao != null ? formatDate(dtEfetivacao!) : 'Selecione a data',
+                                  textAlign: TextAlign.center, // Alinhar o texto no centro
+                                  style: TextStyle(
+                                    color: dtEfetivacao != null ? Colors.black : Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (showErrorDtEfetivacao && dtEfetivacao == null)
                       Padding(
                         padding: EdgeInsets.only(left: 0),
                         child: Align(
@@ -286,92 +453,19 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
                           ),
                         ),
                       ),
-                    SizedBox(height: 5),
-                    Padding(
-                      padding: EdgeInsets.only(top: 20, bottom: 10),
-                      child: Text(
-                        'Data de Efetivação',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(0),
-                        border: Border.all(
-                          color:
-                          showErrorDtEfetivacao ? Colors.red : Colors.transparent,
-                          width: 2,
-                        ),
-                      ),
-                      child: InkWell(
-                        onTap: () async {
-                          final DateTime? selectedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1900),
-                            lastDate: DateTime.now(),
-                          );
-                          if (selectedDate != null) {
-                            setState(() {
-                              dtEfetivacao = selectedDate;
-                              dtEfetivacaoController.text = formatDate(selectedDate);
-                              showErrorDtEfetivacao = false;
-                            });
-                          }
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Icon(Icons.calendar_today),
-                              Text(
-                                dtEfetivacao != null
-                                    ? formatDate(dtEfetivacao!)
-                                    : 'Selecione a data',
-                                style: TextStyle(
-                                  color: dtEfetivacao != null
-                                      ? Colors.black
-                                      : Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (showErrorDtEfetivacao)
-                      Padding(
-                        padding: EdgeInsets.only(left: 0),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Obrigatório',
-                            style: TextStyle(
-                              color: Colors.white,
-                              backgroundColor: Colors.red,
-                            ),
-                          ),
-                        ),
-                      ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 60),
                     SingleChildScrollView(
                       child: Column(
                         children: [
                           ElevatedButton(
                             onPressed: () {
+                              widget.cadastroUser(context);
                               setState(() {
                                 showError = false;
                                 if (matriculaController.text.isEmpty ||
                                     telMovelController.text.isEmpty ||
-                                    tipoServidorController.text.isEmpty ||
-                                    dtEfetivacaoController.text.isEmpty) {
+                                    tipoServidor == null  ||
+                                    dtEfetivacao  == null) {
                                   showErrorMatricula = matriculaController.text.isEmpty;
                                   showErrorTelMovel =
                                       telMovelController.text.isEmpty;
@@ -423,6 +517,6 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
   }
 
   String formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year.toString()}';
+    return '${date.day.toString().padLeft(2, '0')} / ${date.month.toString().padLeft(2, '0')} / ${date.year.toString()}';
   }
 }

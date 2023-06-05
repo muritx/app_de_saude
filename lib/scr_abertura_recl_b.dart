@@ -129,7 +129,7 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(bottom: 40),
+                      padding: EdgeInsets.only(bottom: 5),
                       child: Text(
                         'Nova Reclamação',
                         style: TextStyle(
@@ -137,6 +137,19 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
+                      ),
+                    ),
+                    Container(
+                      width: 200,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(0),
+                        border: Border.all(color: Colors.white54),
+                      ),
+                      child: LinearProgressIndicator(
+                        value: 0.50,
+                        backgroundColor: Colors.white,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
                       ),
                     ),
                     SizedBox(height: 20),

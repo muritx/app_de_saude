@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_main_menu.dart';
 import 'package:app_de_saude/scr_cadastro_cidadao_b.dart';
+import 'package:flutter/services.dart';
 
 class ScrCadastroCidadaoA extends StatefulWidget {
   final int? tipoUser;
@@ -173,12 +174,22 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                         ),
                       ),
                       child: TextFormField(
+                        maxLength: 14,
+                        decoration: InputDecoration(
+                            counterText: ''
+                        ),
                         controller: cpfController,
                         textAlign: TextAlign.center,
                         onChanged: (value) {
-                          cpf = value;
-                          showErrorCpf = false;
+                          setState(() {
+                            cpf = value;
+                            showErrorCpf = false;
+                          });
                         },
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          CpfInputFormatter(),
+                        ],
                       ),
                     ),
                     if (showErrorCpf)
@@ -222,9 +233,15 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                         controller: telMovelController,
                         textAlign: TextAlign.center,
                         onChanged: (value) {
-                          telMovel = value;
-                          showErrorTelMovel = false;
+                          setState(() {
+                            telMovel = value;
+                            showErrorTelMovel = false;
+                          });
                         },
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          PhoneNumberInputFormatter(),
+                        ],
                       ),
                     ),
                     if (showErrorTelMovel)
@@ -268,9 +285,15 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                         controller: telFixoController,
                         textAlign: TextAlign.center,
                         onChanged: (value) {
-                          telFixo = value;
-                          showErrorTelFixo = false;
+                          setState(() {
+                            telFixo = value;
+                            showErrorTelFixo = false;
+                          });
                         },
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          PhoneNumberInputFormatter(),
+                        ],
                       ),
                     ),
                     if (showErrorTelFixo)
@@ -304,8 +327,7 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(0),
                         border: Border.all(
-                          color:
-                              showErrorDtNasc ? Colors.red : Colors.transparent,
+                          color: showErrorDtNasc ? Colors.red : Colors.transparent,
                           width: 2,
                         ),
                       ),
@@ -331,14 +353,13 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Icon(Icons.calendar_today),
-                              Text(
-                                dtNasc != null
-                                    ? formatDate(dtNasc!)
-                                    : 'Selecione a data',
-                                style: TextStyle(
-                                  color: dtNasc != null
-                                      ? Colors.black
-                                      : Colors.grey,
+                              Expanded(
+                                child: Text(
+                                  dtNasc != null ? formatDate(dtNasc!) : 'Selecione a data',
+                                  textAlign: TextAlign.center, // Alinhar o texto no centro
+                                  style: TextStyle(
+                                    color: dtNasc != null ? Colors.black : Colors.grey,
+                                  ),
                                 ),
                               ),
                             ],
@@ -405,19 +426,29 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                             },
                             style: ButtonStyle(
                               backgroundColor:
-                                  MaterialStateProperty.all(Colors.white),
+                              MaterialStateProperty.all(Colors.white),
                               fixedSize:
-                                  MaterialStateProperty.all(Size(200, 50)),
+                              MaterialStateProperty.all(Size(150, 50)),
                             ),
                             child: Text(
-                              'Finalizar',
+                              'Avançar',
                               style: TextStyle(
-                                color: Colors.blue,
                                 fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
                               ),
                             ),
                           ),
+                          if (showError)
+                            Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Text(
+                                'Por favor, preencha todos os campos',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -430,8 +461,88 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
       ),
     );
   }
+}
 
-  String formatDate(DateTime date) {
-    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year.toString()}';
+class PhoneNumberInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final String formattedText = _maskPhoneNumber(newValue.text);
+    final int selectionIndex = formattedText.length;
+    return TextEditingValue(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: selectionIndex),
+    );
   }
+
+  String _maskPhoneNumber(String inputText) {
+    final cleanedText = inputText.replaceAll(RegExp(r'\D'), '');
+    if (cleanedText.isEmpty) {
+      return '';
+    } else if (cleanedText.length <= 2) {
+      return cleanedText;
+    } else if (cleanedText.length <= 6) {
+      return '(' +
+          cleanedText.substring(0, 2) +
+          ') ' +
+          cleanedText.substring(2);
+    } else if (cleanedText.length <= 10) {
+      return '(' +
+          cleanedText.substring(0, 2) +
+          ') ' +
+          cleanedText.substring(2, 6) +
+          '-' +
+          cleanedText.substring(6);
+    } else {
+      return '(' +
+          cleanedText.substring(0, 2) +
+          ') ' +
+          cleanedText.substring(2, 7) +
+          '-' +
+          cleanedText.substring(7, 11);
+    }
+  }
+}
+
+
+class CpfInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final String formattedText = _maskCpf(newValue.text);
+    final int selectionIndex = formattedText.length;
+    return TextEditingValue(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: selectionIndex),
+    );
+  }
+
+  String _maskCpf(String inputText) {
+    final cleanedText = inputText.replaceAll(RegExp(r'\D'), '');
+    if (cleanedText.isEmpty) {
+      return '';
+    } else if (cleanedText.length <= 3) {
+      return cleanedText;
+    } else if (cleanedText.length <= 6) {
+      return cleanedText.substring(0, 3) + '.' + cleanedText.substring(3);
+    } else if (cleanedText.length <= 9) {
+      return cleanedText.substring(0, 3) +
+          '.' +
+          cleanedText.substring(3, 6) +
+          '.' +
+          cleanedText.substring(6);
+    } else {
+      return cleanedText.substring(0, 3) +
+          '.' +
+          cleanedText.substring(3, 6) +
+          '.' +
+          cleanedText.substring(6, 9) +
+          '-' +
+          cleanedText.substring(9);
+    }
+  }
+}
+
+String formatDate(DateTime date) {
+  return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year.toString().padLeft(4, '0')}";
 }

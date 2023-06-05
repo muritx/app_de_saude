@@ -1,6 +1,10 @@
+import 'package:app_de_saude/scr_datalhe_recl.dart';
 import 'package:flutter/material.dart';
 import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_abertura_recl_a.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ScrMainMenu extends StatefulWidget {
   const ScrMainMenu({Key? key}) : super(key: key);
@@ -10,83 +14,158 @@ class ScrMainMenu extends StatefulWidget {
 }
 
 class _ScrMainMenuState extends State<ScrMainMenu> {
-  final String? nome = 'Teste'; // Variável que recebe nomes
+  late String nome = '';
+  late int tipoUser = -1;
 
-  // Simulação de dados do banco de dados
-  final List<Item> items = [
-    Item(
-      id: 'KPK 1385 XS F',
-      descricao: 'Descrição do Item 1',
-      status: 'Aberto',
-      severidade: 'Alta',
-      dataAbertura: '01/01/2023',
-      dataConclusao: '05/01/2023',
-      diasAberto: '4',
-    ),
-    Item(
-      id: 'WPH 7924 JU C',
-      descricao: 'Descrição do Item 2',
-      status: 'Fechado',
-      severidade: 'Baixa',
-      dataAbertura: '02/01/2023',
-      dataConclusao: '03/01/2023',
-      diasAberto: '1',
-    ),
-    Item(
-      id: 'LZH 0962 ZN R',
-      descricao: 'Descrição do Item 3',
-      status: 'Aberto',
-      severidade: 'Média',
-      dataAbertura: '03/01/2023',
-      dataConclusao: 'null',
-      diasAberto: 'Atual',
-    ),
-    Item(
-      id: 'RHX 7969 IH T',
-      descricao: 'Descrição do Item 4',
-      status: 'Fechado',
-      severidade: 'Alta',
-      dataAbertura: '04/01/2023',
-      dataConclusao: '06/01/2023',
-      diasAberto: '2',
-    ),
-    Item(
-      id: 'ZZY 3732 QA P',
-      descricao: 'Descrição do Item 5',
-      status: 'Aberto',
-      severidade: 'Baixa',
-      dataAbertura: '05/01/2023',
-      dataConclusao: 'null',
-      diasAberto: 'Atual',
-    ),
-    Item(
-      id: 'XMC 6350 OI T',
-      descricao: 'Descrição do Item 6',
-      status: 'Aberto',
-      severidade: 'Média',
-      dataAbertura: '06/01/2023',
-      dataConclusao: 'null',
-      diasAberto: 'Atual',
-    ),
-    Item(
-      id: 'RAC 6352 NL N',
-      descricao: 'Descrição do Item 7',
-      status: 'Aberto',
-      severidade: 'Baixa',
-      dataAbertura: '07/01/2023',
-      dataConclusao: 'null',
-      diasAberto: 'Atual',
-    ),
-    Item(
-      id: 'YIF 5975 BL Y',
-      descricao: 'Descrição do Item 8',
-      status: 'Fechado',
-      severidade: 'Alta',
-      dataAbertura: '08/01/2023',
-      dataConclusao: '09/01/2023',
-      diasAberto: '1',
-    ),
-  ];
+  List<Item> items = [];
+
+  @override
+  void initState() {
+    fetchUserData();
+    super.initState();
+    fetchItemsFromFirebase(); // Busca os dados do Firebase quando a tela for carregada
+  }
+
+  void fetchItemsFromFirebase() {
+    FirebaseFirestore.instance
+        .collection('cadastro_reclamacao')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      items.clear(); // Limpa a lista de items antes de adicioná-los
+
+      querySnapshot.docs.forEach((DocumentSnapshot documentSnapshot) {
+        final itemData = documentSnapshot.data() as Map<String, dynamic>?;
+
+        // Verifica se itemData é nulo antes de acessar os campos
+        if (itemData != null) {
+          Timestamp dataAberturaTimestamp = itemData['dataAbertura'] as Timestamp;
+          DateTime dataAbertura = dataAberturaTimestamp.toDate();
+
+          Timestamp? dataConclusaoTimestamp = itemData['dataConclusao'] as Timestamp?;
+          DateTime? dataConclusao = dataConclusaoTimestamp?.toDate();
+
+          items.add(Item(
+            id: documentSnapshot.reference.id,
+            codigoRecl: itemData['codigoRecl']?.toString() ?? '-',
+            descricao: itemData['descricao']?.toString() ?? '-',
+            status: itemData['status']?.toString() ?? '-',
+            severidade: itemData['severidade']?.toString() ?? '-',
+            dataAbertura: DateFormat('dd/MM/yyyy').format(dataAbertura),
+            dataConclusao: dataConclusao != null ? DateFormat('dd/MM/yyyy').format(dataConclusao) : '-',
+            diasAberto: itemData['diasAberto']?.toString() ?? '-',
+          ));
+        }
+      });
+
+      setState(() {}); // Atualiza o estado para refletir as mudanças na interface
+    }).catchError((error) {
+      print('Erro ao buscar os itens: $error');
+    });
+  }
+
+  void fetchUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      String email = user.email ?? '';
+
+      await fetchUserDataByEmail(email);
+
+      // Restante do código...
+    }
+  }
+
+  Future<void> fetchUserDataByEmail(String email) async {
+    QuerySnapshot cidadaoSnapshot = await FirebaseFirestore.instance
+        .collection('cadastro_cidadao')
+        .where('email', isEqualTo: email)
+        .get();
+
+    QuerySnapshot ouvidorSnapshot = await FirebaseFirestore.instance
+        .collection('cadastro_ouvidor')
+        .where('email', isEqualTo: email)
+        .get();
+
+    if (cidadaoSnapshot.docs.isNotEmpty) {
+      // Obtém o nome e tipoUser da coleção "cadastro_cidadao"
+      Map<String, dynamic>? cidadaoData = cidadaoSnapshot.docs[0].data() as Map<String, dynamic>?;
+
+      if (cidadaoData != null) {
+        setState(() {
+          nome = cidadaoData.containsKey('nome') ? cidadaoData['nome'] as String : '';
+          tipoUser = cidadaoData.containsKey('tipoUser') ? cidadaoData['tipoUser'] as int : -1;
+        });
+
+        if (tipoUser == 0) {
+          // Executar fetchItemsFromFirebase sem limitações
+          fetchItemsFromFirebase();
+        } else if (tipoUser == 1) {
+          // Executar fetchItemsFromFirebase com limitações
+          fetchItemsFromFirebaseLimited(email);
+        }
+
+        // Faça o que for necessário com o nome e tipoUser
+      }
+    } else if (ouvidorSnapshot.docs.isNotEmpty) {
+      // Obtém o nome e tipoUser da coleção "cadastro_ouvidor"
+      Map<String, dynamic>? ouvidorData = ouvidorSnapshot.docs[0].data() as Map<String, dynamic>?;
+
+      if (ouvidorData != null) {
+        setState(() {
+          nome = ouvidorData.containsKey('nome') ? ouvidorData['nome'] as String : '';
+          tipoUser = ouvidorData.containsKey('tipoUser') ? ouvidorData['tipoUser'] as int : -1;
+        });
+
+        if (tipoUser == 0) {
+          // Executar fetchItemsFromFirebase sem limitações
+          fetchItemsFromFirebase();
+        } else if (tipoUser == 1) {
+          // Executar fetchItemsFromFirebase com limitações
+          fetchItemsFromFirebaseLimited(email);
+        }
+
+        // Faça o que for necessário com o nome e tipoUser
+      }
+    }
+  }
+
+  void fetchItemsFromFirebaseLimited(String email) {
+    FirebaseFirestore.instance
+        .collection('cadastro_reclamacao')
+        .where('emailAbertura', isEqualTo: email)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      items.clear(); // Limpa a lista de items antes de adicioná-los
+
+      querySnapshot.docs.forEach((DocumentSnapshot documentSnapshot) {
+        final itemData = documentSnapshot.data() as Map<String, dynamic>?;
+
+        // Verifica se itemData é nulo antes de acessar os campos
+        if (itemData != null) {
+          Timestamp dataAberturaTimestamp = itemData['dataAbertura'] as Timestamp;
+          DateTime dataAbertura = dataAberturaTimestamp.toDate();
+
+          Timestamp? dataConclusaoTimestamp = itemData['dataConclusao'] as Timestamp?;
+          DateTime? dataConclusao = dataConclusaoTimestamp?.toDate();
+
+          items.add(Item(
+            id: documentSnapshot.reference.id,
+            codigoRecl: itemData['codigoRecl']?.toString() ?? '-',
+            descricao: itemData['descricao']?.toString() ?? '-',
+            status: itemData['status']?.toString() ?? '-',
+            severidade: itemData['severidade']?.toString() ?? '-',
+            dataAbertura: DateFormat('dd/MM/yyyy').format(dataAbertura),
+            dataConclusao: dataConclusao != null ? DateFormat('dd/MM/yyyy').format(dataConclusao) : '-',
+            diasAberto: itemData['diasAberto']?.toString() ?? '-',
+          ));
+        }
+      });
+
+      setState(() {}); // Atualiza o estado para refletir as mudanças na interface
+    }).catchError((error) {
+      print('Erro ao buscar os itens: $error');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -191,7 +270,7 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
                     ),
                   ),
                   Expanded(
-                    child: items.isEmpty
+                    child: items.length == 0
                         ? Center(
                       child: Text(
                         'Não há reclamações abertas',
@@ -219,86 +298,98 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
   }
 
   Widget buildItem(BuildContext context, Item item) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'ID ${item.id}',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: Colors.blue,
-            ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetalheReclScreen(documentId: item.id!, nome: nome,),
           ),
-          SizedBox(height: 8),
-          Text(
-            'Status: ${item.status}',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black,
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'ID ${item.codigoRecl}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.blue,
+              ),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Severidade: ${item.severidade}',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black,
+            SizedBox(height: 8),
+            Text(
+              'Status: ${item.status}',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+              ),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Data de Abertura: ${item.dataAbertura}',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black,
+            SizedBox(height: 4),
+            Text(
+              'Severidade: ${item.severidade}',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+              ),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Data de Conclusão: ${item.dataConclusao}',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black,
+            SizedBox(height: 4),
+            Text(
+              'Data de Abertura: ${item.dataAbertura}',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+              ),
             ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Dias Aberto: ${item.diasAberto}',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.black,
+            SizedBox(height: 4),
+            Text(
+              'Data de Conclusão: ${item.dataConclusao}',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: 4),
+            Text(
+              'Dias em Aberto: ${item.diasAberto}',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class Item {
-  final String? id;
-  final String? descricao;
-  final String? status;
-  final String? severidade;
-  final String? dataAbertura;
-  final String? dataConclusao;
-  final String? diasAberto;
+  String? id;
+  String? codigoRecl;
+  String? descricao;
+  String? status;
+  String? severidade;
+  String? dataAbertura;
+  String? dataConclusao;
+  String? diasAberto;
 
   Item({
-    required this.id,
-    required this.descricao,
-    required this.status,
-    required this.severidade,
-    required this.dataAbertura,
-    required this.dataConclusao,
-    required this.diasAberto,
+    this.id,
+    this.codigoRecl,
+    this.descricao,
+    this.status,
+    this.severidade,
+    this.dataAbertura,
+    this.dataConclusao,
+    this.diasAberto,
   });
 }

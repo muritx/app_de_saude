@@ -129,6 +129,19 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                           ),
                         ),
                       ),
+                      Container(
+                        width: 200,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(0),
+                          border: Border.all(color: Colors.white54),
+                        ),
+                        child: LinearProgressIndicator(
+                          value: 0.75,
+                          backgroundColor: Colors.white,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                        ),
+                      ),
                       SizedBox(height: 10),
                       Padding(
                         padding: EdgeInsets.only(top: 20, bottom: 10),
@@ -257,9 +270,7 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(0),
                           border: Border.all(
-                            color: showError && dataOcorrido == null
-                                ? Colors.red
-                                : Colors.transparent,
+                            color: showError && dataOcorrido == null ? Colors.red : Colors.transparent,
                             width: 2,
                           ),
                         ),
@@ -281,14 +292,14 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Icon(Icons.calendar_today),
-                                Text(
-                                  dataOcorrido != null
-                                      ? formatDate(dataOcorrido!)
-                                      : 'Selecione a data',
-                                  style: TextStyle(
-                                      color: dataOcorrido != null
-                                          ? Colors.black
-                                          : Colors.grey),
+                                Expanded(
+                                  child: Text(
+                                    dataOcorrido != null ? formatDate(dataOcorrido!) : 'Selecione a data',
+                                    textAlign: TextAlign.center, // Alinhar o texto no centro
+                                    style: TextStyle(
+                                      color: dataOcorrido != null ? Colors.black : Colors.grey,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

@@ -3,18 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_main_menu.dart';
 import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ScrCadastroCidadaoB extends StatefulWidget {
-  final int? tipoUser;
-  final String? nome;
-  final String? email;
-  final String? senha;
-  final String? cpf;
-  final String? telMovel;
-  final String? telFixo;
-  final DateTime? dtNasc;
 
-  const ScrCadastroCidadaoB({
+  ScrCadastroCidadaoB({
     Key? key,
     required this.tipoUser,
     required this.nome,
@@ -24,11 +18,81 @@ class ScrCadastroCidadaoB extends StatefulWidget {
     required this.telMovel,
     required this.telFixo,
     required this.dtNasc,
-  }) : super(key: key);
+  }) : super(key: key){
+    emailController.text = email ?? '';
+    passwordController.text = senha ?? '';
+  }
+
+  final int? tipoUser;
+  final String? nome;
+  final String? email;
+  final String? senha;
+  final String? cpf;
+  final String? telMovel;
+  final String? telFixo;
+  final DateTime? dtNasc;
+  final _firebaseAuth = FirebaseAuth.instance;
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   State<ScrCadastroCidadaoB> createState() => _ScrCadastroCidadaoBState();
+
+  cadastroUser(context) async {
+    try {
+      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      // O usuário foi criado com sucesso
+      if (userCredential != null) {
+        // Faça o que for necessário após o usuário ter sido criado
+      }
+    } on FirebaseAuthException catch (erro) {
+      print(erro);
+      // Lida com erros específicos do FirebaseAuth
+      if (erro.code == 'weak-password') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('A senha é muito fraca')),
+        );
+      } else if (erro.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('O email já está em uso')),
+        );
+      } else {
+        // Lida com outros erros do FirebaseAuth
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao criar usuário')),
+        );
+      }
+    } catch (erro) {
+      print(erro);
+      // Lida com outros erros não relacionados ao FirebaseAuth
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao criar usuário')),
+      );
+    }
+    try{
+      UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
+      if(userCredential != null){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ScrMainMenu(),
+          ),
+        );
+      }
+    }on FirebaseAuthException catch(erro) {
+      print(erro.hashCode);
+      print(erro);
+    }
+  }
 }
+
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+final String collectionName = 'cadastro_cidadao';
 
 class _ScrCadastroCidadaoBState extends State<ScrCadastroCidadaoB> {
   String? cep;
@@ -100,6 +164,28 @@ class _ScrCadastroCidadaoBState extends State<ScrCadastroCidadaoB> {
     print('Bairro: $bairro');
     print('Cidade: $cidade');
     print('Estado: $estado');
+
+    _firestore.collection(collectionName).add({
+      'tipoUser': widget.tipoUser,
+      'nome': widget.nome,
+      'email': widget.email,
+      'senha': widget.senha,
+      'cpf': widget.cpf,
+      'telMovel': widget.telMovel,
+      'telFixo': widget.telFixo,
+      'dtNasc': widget.dtNasc,
+      'cep': cep,
+      'logradouro': logradouro,
+      'numero': numero,
+      'complemento': complemento,
+      'bairro': bairro,
+      'cidade': cidade,
+      'estado': estado,
+    }).then((value) {
+      print('Dados armazenados com sucesso no Firebase!');
+    }).catchError((error) {
+      print('Erro ao armazenar dados no Firebase: $error');
+    });
   }
 
   @override
@@ -480,6 +566,7 @@ class _ScrCadastroCidadaoBState extends State<ScrCadastroCidadaoB> {
                         children: [
                           ElevatedButton(
                             onPressed: () {
+                              widget.cadastroUser(context);
                               setState(() {
                                 showError = false;
                                 if (cepController.text.isEmpty ||

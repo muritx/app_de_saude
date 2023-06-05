@@ -14,6 +14,35 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
+
+  Padding botaoSubmit(
+      BuildContext context, GlobalKey<FormState> formKey, String textoBotao) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(40, 8, 40, 8),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            // Ação do botão
+          },
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+            ),
+            primary: Colors.indigo,
+          ),
+          child: Text(
+            textoBotao,
+            style: GoogleFonts.openSans(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
