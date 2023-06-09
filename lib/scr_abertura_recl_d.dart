@@ -244,11 +244,9 @@ class _ScrAberturaReclDState extends State<ScrAberturaReclD> {
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.green[700]),
-                          fixedSize:
-                              MaterialStateProperty.all(Size.fromHeight(60)),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                          MaterialStateProperty.all(Colors.green),
+                          fixedSize: MaterialStateProperty.all(Size(150, 50)),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

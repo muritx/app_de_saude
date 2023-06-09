@@ -21,12 +21,23 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
   List<String> unidades = [
     'UPAe Limoeiro',
     'UPA São Lourenço da Mata - Professor Fernando Figueira',
+    'UPA de Caruaru - Petrópolis, Caruaru',
+    'UPA de Arcoverde - São Cristóvão, Arcoverde',
+    'UPAE de Belo Jardim - São Pedro, Belo Jardim',
+    'UPA de Salgueiro - Santo Antônio, Salgueiro',
+    'UPAE de Serra Talhada - São Cristóvão, Serra Talhada',
     'Outros',
   ];
 
   List<String> tiposServico = [
-    'Emissão de Documentos',
-    'Limpeza',
+    'Emissão de Documentos','Limpeza','Médicos e Cirúrgicos Gerais','Psiquiátria e Reabilitação',
+    'Emergência','Clínica de Geriatria','Laboratórios Dentários','Bancos de Sangue e Órgãos','Serviços de Saúde Domiciliar',
+    'Instalações de Enfermaria','Instalações de Cuidados Comunitários',
+    'Atendimento Ambulatorial','Aparelhos Eletronicos, Eletromédicos, Eletroterapêuticos e de Irradiação',
+    'Instrumentos Cirúrgicos, Médicos e Suprimentos','Equipamentos em Geral','Esterilização e Limpeza de Dispositivos Médicos',
+    'Serviços de Limpeza Gerais','Infraestrutura e Manutenção Predial','Assistência Social','Agentes de Saúde','Vestuário Médico Cirúrgico',
+    'Suprimentos Clinicos','Serviços de Descarte de Resíduos Médicos','Emissão e Expedição de Documentos','Manipulação e Disponibilização de Farmacos ',
+    'Embalagem e Rotulagem de Produtos Farmacêuticos','Gerenciamento Hospitalar',
     'Outros',
   ];
 
@@ -34,6 +45,16 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
     'Sem Empresa Envolvida',
     'ABC Serviços Gerais',
     'CBA Segurança',
+    'ABC Soluções',
+    'XPTO Tecnologia',
+    'XYZ Serviços',
+    '123 Construtora',
+    'XYZ Logística',
+    'ABC Indústria',
+    '123 Soluções',
+    'ABC Serviços de Transporte',
+    'XPTO Saúde',
+    'XYZ Consultoria',
   ];
 
   String? selectedSecretaria;
@@ -379,11 +400,12 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                         });
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.white),
+                        backgroundColor:
+                        MaterialStateProperty.all(Colors.green),
                         fixedSize: MaterialStateProperty.all(Size.fromHeight(60)),
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(2),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
@@ -391,7 +413,7 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                         'Próximo Passo',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.blue,
+                          color: Colors.white,
                         ),
                       ),
                     ),

@@ -381,13 +381,11 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.white),
-                          fixedSize:
-                              MaterialStateProperty.all(Size.fromHeight(60)),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                          MaterialStateProperty.all(Colors.green),
+                          fixedSize: MaterialStateProperty.all(Size.fromHeight(60)),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(2),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                         ),
@@ -395,7 +393,7 @@ class _ScrAberturaReclCState extends State<ScrAberturaReclC> {
                           'Próximo Passo',
                           style: TextStyle(
                             fontSize: 18,
-                            color: Colors.blue,
+                            color: Colors.white,
                           ),
                         ),
                       ),
