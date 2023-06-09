@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'forget_password.dart';
-import 'reclame_screen.dart';
+import 'scr_signup.dart';
 import 'scr_main_menu.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -55,9 +55,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.bold, // Peso da fonte do texto
                         ),
                       ),
-                      child: Text('Entrar'),
+                      child: Text('Fazer Login'),
                     ),
-                    SizedBox(height: 15),
+                    SizedBox(height: 35),
                     MouseRegion(
                       cursor: SystemMouseCursors.click,
                       child: GestureDetector(
@@ -106,9 +106,10 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     }on FirebaseAuthException catch(erro){
-      print(erro.hashCode);
-      print(erro);
-      if(erro.hashCode == 97258406){
+      // print(erro.hashCode);
+      // print(erro.code);
+      // print('*' + (erro?.message ?? '') + '*');
+      if(erro.message == 'An unknown error occurred: FirebaseError: Firebase: There is no user record corresponding to this identifier. The user may have been deleted. (auth/user-not-found).'){
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -126,25 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         );
-      }else if(erro.hashCode == 276186007){
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Informe a Senha',
-              style: TextStyle(
-                fontSize: 16, // Tamanho da fonte da mensagem
-                color: Colors.white, // Cor do texto da mensagem
-              ),
-            ),
-            backgroundColor: Colors.red, // Cor de fundo do SnackBar
-            duration: Duration(seconds: 3), // Duração de exibição do SnackBar
-            behavior: SnackBarBehavior.floating, // Comportamento do SnackBar
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), // Borda arredondada do SnackBar
-            ),
-          ),
-        );
-      }else if(erro.hashCode == 505314357){
+      }else if(erro.message == 'An unknown error occurred: FirebaseError: Firebase: The password is invalid or the user does not have a password. (auth/wrong-password).'){
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -162,11 +145,11 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         );
-      }else if(erro.hashCode == 276948968){
+      }else if(erro.message == 'An unknown error occurred: FirebaseError: Firebase: An internal AuthError has occurred. (auth/internal-error).'){
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Informe o Email',
+              'Não foi possível conectar. Verifique credenciais',
               style: TextStyle(
                 fontSize: 16, // Tamanho da fonte da mensagem
                 color: Colors.white, // Cor do texto da mensagem
@@ -180,13 +163,31 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         );
-      }else if(erro.hashCode == 121129892){
+      }else if(erro.message == 'An unknown error occurred: FirebaseError: Firebase: Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later. (auth/too-many-requests).'){
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               'Usuário Bloqueado! Tente novamente mais tarde ou contate o administrador.',
               style: TextStyle(
                 fontSize: 12, // Tamanho da fonte da mensagem
+                color: Colors.white, // Cor do texto da mensagem
+              ),
+            ),
+            backgroundColor: Colors.red, // Cor de fundo do SnackBar
+            duration: Duration(seconds: 3), // Duração de exibição do SnackBar
+            behavior: SnackBarBehavior.floating, // Comportamento do SnackBar
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // Borda arredondada do SnackBar
+            ),
+          ),
+        );
+      }else if(erro.message == 'An unknown error occurred: FirebaseError: Firebase: The email address is badly formatted. (auth/invalid-email).'){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Email Inválido',
+              style: TextStyle(
+                fontSize: 16, // Tamanho da fonte da mensagem
                 color: Colors.white, // Cor do texto da mensagem
               ),
             ),
@@ -247,17 +248,18 @@ Column footer() {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'SES-PE',
+            'SES-PE ',
             style: GoogleFonts.openSans(
               color: Colors.white,
               fontSize: 32,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.bold,
             ),
           ),
           Text(
-            'Secretaria\nEstadual de Saúde',
+            'Secretaria\nEstadual de Saúde ',
             style: GoogleFonts.openSans(
               color: Colors.white,
+              fontSize: 10,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -287,42 +289,65 @@ Column footer() {
 Column titleReclame(String? texto) {
   return Column(
     children: [
-      Text(
-        'Reclame',
-        style: GoogleFonts.openSans(
-          color: Colors.white,
-          fontSize: 50,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 250,
-            child: Text(
-              texto ?? '',
-              style: GoogleFonts.openSans(
-                fontSize: 15,
-                color: Colors.white,
+          Column(
+            children: [
+              Text(
+                'S  I  S  T  E  M  A',
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w100,
+                ),
               ),
-              textAlign: TextAlign.center,
-            ),
+              Text(
+                'Reclame Aqui',
+                style: TextStyle(
+                  fontSize: 34,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Serviços Públicos',
+                style: TextStyle(
+                  fontSize: 26,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w100,
+                ),
+              ),
+            ],
           ),
+          SizedBox(width: 8),
           SizedBox(
-            width: 100,
-            height: 100,
+            width: 120,
+            height: 120,
             child: Image.asset(
-              'assets/images/mao.png',
-              fit: BoxFit.fill,
+              'assets/images/mao_a.png',
+              fit: BoxFit.cover,
             ),
           ),
         ],
       ),
+      SizedBox(height: 28),
+      SizedBox(
+        width: 250,
+        child: Text(
+          texto ?? '',
+          style: TextStyle(
+            fontSize: 15,
+            color: Colors.white,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
     ],
   );
 }
+
 
 Container backgroundColor(
     {required BuildContext context, required Widget child}) {
@@ -377,7 +402,7 @@ Padding campoForm(TextEditingController textEditingController,
         filled: true,
         hintText: textoDica,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(19.0),
+          borderRadius: BorderRadius.circular(0.0),
           borderSide: const BorderSide(
             color: Colors.indigo,
             width: 2.0,

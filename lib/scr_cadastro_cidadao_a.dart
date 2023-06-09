@@ -1,25 +1,52 @@
+import 'package:app_de_saude/scr_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_main_menu.dart';
 import 'package:app_de_saude/scr_cadastro_cidadao_b.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ScrCadastroCidadaoA extends StatefulWidget {
   final int? tipoUser;
   final String? nome;
   final String? email;
   final String? senha;
+  final _firebaseAuth = FirebaseAuth.instance;
 
-  const ScrCadastroCidadaoA({
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  ScrCadastroCidadaoA({
     Key? key,
     required this.nome,
     required this.email,
     required this.senha,
     required this.tipoUser,
-  }) : super(key: key);
+  }) : super(key: key){
+    emailController.text = email ?? '';
+    passwordController.text = senha ?? '';
+  }
 
   @override
   State<ScrCadastroCidadaoA> createState() => _ScrCadastroCidadaoAState();
+
+  removeUser(context) async {
+    try{
+      UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
+      if(userCredential != null){
+        User? user = FirebaseAuth.instance.currentUser;
+        try {
+          await user?.delete();
+        } catch (e) {
+          print(e);
+        }
+      }
+    }on FirebaseAuthException catch(erro) {
+      print(erro.hashCode);
+      print(erro);
+    }
+  }
 }
 
 class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
@@ -102,17 +129,17 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                   ),
                 ),
               ),
-              ListTile(
-                title: Text('Histórico'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ScrMainMenu(),
-                    ),
-                  );
-                },
-              ),
+              // ListTile(
+              //   title: Text('Histórico'),
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => ScrMainMenu(),
+              //       ),
+              //     );
+              //   },
+              // ),
               ListTile(
                 title: Text('Sair'),
                 onTap: () {
@@ -140,6 +167,8 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    SizedBox(height: 5),
+                    titleReclame(''),
                     Padding(
                       padding: EdgeInsets.only(bottom: 10),
                       child: Text(
@@ -151,7 +180,7 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 5),
+                    SizedBox(height: 15),
                     Padding(
                       padding: EdgeInsets.only(top: 10, bottom: 1),
                       child: Text(
@@ -311,7 +340,7 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                       ),
                     SizedBox(height: 5),
                     Padding(
-                      padding: EdgeInsets.only(top: 20, bottom: 10),
+                      padding: EdgeInsets.only(top: 10, bottom: 1),
                       child: Text(
                         'Data de Nascimento',
                         style: TextStyle(
@@ -381,10 +410,39 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                           ),
                         ),
                       ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 100),
                     SingleChildScrollView(
                       child: Column(
                         children: [
+                        Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () async {
+                              await widget.removeUser(context);
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SignUpScreen()
+                                  ),
+                                );
+                              });
+                            },
+                            style: ButtonStyle(
+                              backgroundColor:
+                              MaterialStateProperty.all(Colors.indigo),
+                              fixedSize:
+                              MaterialStateProperty.all(Size(150, 50)),
+                            ),
+                            child: Text(
+                              'Voltar',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                           ElevatedButton(
                             onPressed: () {
                               setState(() {
@@ -426,7 +484,7 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                             },
                             style: ButtonStyle(
                               backgroundColor:
-                              MaterialStateProperty.all(Colors.white),
+                              MaterialStateProperty.all(Colors.lightGreen[800]),
                               fixedSize:
                               MaterialStateProperty.all(Size(150, 50)),
                             ),
@@ -434,7 +492,7 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                               'Avançar',
                               style: TextStyle(
                                 fontSize: 20,
-                                color: Colors.blue,
+                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -450,6 +508,8 @@ class _ScrCadastroCidadaoAState extends State<ScrCadastroCidadaoA> {
                               ),
                             ),
                         ],
+    ),
+    ],
                       ),
                     ),
                   ],

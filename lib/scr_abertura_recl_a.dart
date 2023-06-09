@@ -123,7 +123,7 @@ class _ScrAberturaReclState extends State<ScrAberturaRecl> {
                     child: Text(
                       'Antes de prosseguir, precisamos confirmar que você deseja enviar seus dados pessoais à Ouvidoria para melhor atendê-lo:',
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 20,
                         color: Colors.white,
                       ),
                       textAlign: TextAlign.center,
@@ -146,7 +146,7 @@ class _ScrAberturaReclState extends State<ScrAberturaRecl> {
                           );
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors.white),
+                          backgroundColor: MaterialStateProperty.all(Colors.green),
                           fixedSize: MaterialStateProperty.all(Size.fromHeight(60)),
                           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
@@ -158,7 +158,7 @@ class _ScrAberturaReclState extends State<ScrAberturaRecl> {
                           'Sim, envie meus dados pessoais',
                           style: TextStyle(
                             fontSize: 18,
-                            color: Colors.blue,
+                            color: Colors.white,
                           ),
                         ),
                       ),

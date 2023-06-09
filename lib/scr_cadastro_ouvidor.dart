@@ -1,3 +1,4 @@
+import 'package:app_de_saude/scr_signup.dart';
 import 'package:app_de_saude/scr_cadastro_cidadao_a.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -31,41 +32,58 @@ class ScrCadastroOuvidor extends StatefulWidget {
   @override
   State<ScrCadastroOuvidor> createState() => _ScrCadastroOuvidorState();
 
-  cadastroUser(context) async {
-    try {
-      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-
-      // O usuário foi criado com sucesso
-      if (userCredential != null) {
-        // Faça o que for necessário após o usuário ter sido criado
+  removeUser(context) async {
+    try{
+      UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
+      if(userCredential != null){
+        User? user = FirebaseAuth.instance.currentUser;
+        try {
+          await user?.delete();
+        } catch (e) {
+          print(e);
+        }
       }
-    } on FirebaseAuthException catch (erro) {
+    }on FirebaseAuthException catch(erro) {
+      print(erro.hashCode);
       print(erro);
-      // Lida com erros específicos do FirebaseAuth
-      if (erro.code == 'weak-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('A senha é muito fraca')),
-        );
-      } else if (erro.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('O email já está em uso')),
-        );
-      } else {
-        // Lida com outros erros do FirebaseAuth
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao criar usuário')),
-        );
-      }
-    } catch (erro) {
-      print(erro);
-      // Lida com outros erros não relacionados ao FirebaseAuth
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao criar usuário')),
-      );
     }
+  }
+
+  loginUser(context) async {
+  //   try {
+  //     UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+  //       email: emailController.text,
+  //       password: passwordController.text,
+  //     );
+  //
+  //     // O usuário foi criado com sucesso
+  //     if (userCredential != null) {
+  //       // Faça o que for necessário após o usuário ter sido criado
+  //     }
+  //   } on FirebaseAuthException catch (erro) {
+  //     print(erro);
+  //     // Lida com erros específicos do FirebaseAuth
+  //     if (erro.code == 'weak-password') {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('A senha é muito fraca')),
+  //       );
+  //     } else if (erro.code == 'email-already-in-use') {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('O email já está em uso')),
+  //       );
+  //     } else {
+  //       // Lida com outros erros do FirebaseAuth
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Erro ao criar usuário')),
+  //       );
+  //     }
+  //   } catch (erro) {
+  //     print(erro);
+  //     // Lida com outros erros não relacionados ao FirebaseAuth
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Erro ao criar usuário')),
+  //     );
+  //   }
     try{
       UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
       if(userCredential != null){
@@ -388,9 +406,9 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
                       ),
                     SizedBox(height: 5),
                     Padding(
-                      padding: EdgeInsets.only(top: 20, bottom: 10),
+                      padding: EdgeInsets.only(top: 10, bottom: 1),
                       child: Text(
-                        'Data do Ocorrido',
+                        'Data de Efetivação',
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.white,
@@ -457,10 +475,38 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
                     SingleChildScrollView(
                       child: Column(
                         children: [
+                        Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () async {
+                              await widget.removeUser(context);
+                              setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SignUpScreen()
+                                  ),
+                                );
+                              });
+                            },
+                            style: ButtonStyle(
+                              backgroundColor:
+                              MaterialStateProperty.all(Colors.indigo),
+                              fixedSize:
+                              MaterialStateProperty.all(Size(150, 50)),
+                            ),
+                            child: Text(
+                              'Voltar',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                           ElevatedButton(
                             onPressed: () {
-                              widget.cadastroUser(context);
-                              setState(() {
+                              setState(() async {
                                 showError = false;
                                 if (matriculaController.text.isEmpty ||
                                     telMovelController.text.isEmpty ||
@@ -479,6 +525,7 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
                                   showErrorTipoServidor = false;
                                   showErrorDtEfetivacao = false;
                                   finalizarCadastroCidadao();
+                                  await widget.loginUser(context);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -490,19 +537,20 @@ class _ScrCadastroOuvidorState extends State<ScrCadastroOuvidor> {
                             },
                             style: ButtonStyle(
                               backgroundColor:
-                              MaterialStateProperty.all(Colors.white),
+                              MaterialStateProperty.all(Colors.lightGreen[800]),
                               fixedSize:
-                              MaterialStateProperty.all(Size(200, 50)),
+                              MaterialStateProperty.all(Size(150, 50)),
                             ),
                             child: Text(
                               'Finalizar',
                               style: TextStyle(
-                                color: Colors.blue,
+                                color: Colors.white,
                                 fontSize: 20,
-                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
+                        ],
+                        ),
                         ],
                       ),
                     ),

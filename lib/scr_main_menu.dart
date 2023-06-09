@@ -16,6 +16,7 @@ class ScrMainMenu extends StatefulWidget {
 class _ScrMainMenuState extends State<ScrMainMenu> {
   late String nome = '';
   late int tipoUser = -1;
+  bool isLoading = false;
 
   List<Item> items = [];
 
@@ -23,10 +24,12 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
   void initState() {
     fetchUserData();
     super.initState();
-    fetchItemsFromFirebase(); // Busca os dados do Firebase quando a tela for carregada
   }
 
   void fetchItemsFromFirebase() {
+    setState(() {
+      isLoading = true;
+    });
     FirebaseFirestore.instance
         .collection('cadastro_reclamacao')
         .get()
@@ -60,6 +63,10 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
       setState(() {}); // Atualiza o estado para refletir as mudanças na interface
     }).catchError((error) {
       print('Erro ao buscar os itens: $error');
+    }).whenComplete(() {
+      setState(() {
+        isLoading = false;
+      });
     });
   }
 
@@ -85,11 +92,9 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
         .collection('cadastro_ouvidor')
         .where('email', isEqualTo: email)
         .get();
-
     if (cidadaoSnapshot.docs.isNotEmpty) {
       // Obtém o nome e tipoUser da coleção "cadastro_cidadao"
       Map<String, dynamic>? cidadaoData = cidadaoSnapshot.docs[0].data() as Map<String, dynamic>?;
-
       if (cidadaoData != null) {
         setState(() {
           nome = cidadaoData.containsKey('nome') ? cidadaoData['nome'] as String : '';
@@ -135,8 +140,8 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
         .where('emailAbertura', isEqualTo: email)
         .get()
         .then((QuerySnapshot querySnapshot) {
+      //await Future.delayed(Duration(seconds: 10));
       items.clear(); // Limpa a lista de items antes de adicioná-los
-
       querySnapshot.docs.forEach((DocumentSnapshot documentSnapshot) {
         final itemData = documentSnapshot.data() as Map<String, dynamic>?;
 
@@ -269,8 +274,41 @@ class _ScrMainMenuState extends State<ScrMainMenu> {
                       ),
                     ),
                   ),
+                  Visibility(
+                    visible: tipoUser == 1,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ScrAberturaRecl()),
+                          );
+                        });
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.green[800]),
+                        fixedSize: MaterialStateProperty.all(Size(1500, 50)),
+                      ),
+                      child: Text(
+                        'Abrir uma Nova Reclamação',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
                   Expanded(
-                    child: items.length == 0
+                    child: isLoading
+                        ? Container(
+                      color: Colors.black.withOpacity(0.5),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      ),
+                    )
+                        : items.length == 0
                         ? Center(
                       child: Text(
                         'Não há reclamações abertas',

@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:app_de_saude/scr_cadastro_cidadao_a.dart';
 import 'package:flutter/material.dart';
 import 'package:app_de_saude/login_screen.dart';
 import 'package:app_de_saude/scr_main_menu.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 
 class ScrCadastroCidadaoB extends StatefulWidget {
 
@@ -39,41 +41,7 @@ class ScrCadastroCidadaoB extends StatefulWidget {
   @override
   State<ScrCadastroCidadaoB> createState() => _ScrCadastroCidadaoBState();
 
-  cadastroUser(context) async {
-    try {
-      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-
-      // O usuário foi criado com sucesso
-      if (userCredential != null) {
-        // Faça o que for necessário após o usuário ter sido criado
-      }
-    } on FirebaseAuthException catch (erro) {
-      print(erro);
-      // Lida com erros específicos do FirebaseAuth
-      if (erro.code == 'weak-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('A senha é muito fraca')),
-        );
-      } else if (erro.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('O email já está em uso')),
-        );
-      } else {
-        // Lida com outros erros do FirebaseAuth
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao criar usuário')),
-        );
-      }
-    } catch (erro) {
-      print(erro);
-      // Lida com outros erros não relacionados ao FirebaseAuth
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao criar usuário')),
-      );
-    }
+  loginUser(context) async {
     try{
       UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(email: emailController.text, password: passwordController.text);
       if(userCredential != null){
@@ -236,17 +204,17 @@ class _ScrCadastroCidadaoBState extends State<ScrCadastroCidadaoB> {
                   ),
                 ),
               ),
-              ListTile(
-                title: Text('Histórico'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ScrMainMenu(),
-                    ),
-                  );
-                },
-              ),
+              // ListTile(
+              //   title: Text('Histórico'),
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => ScrMainMenu(),
+              //       ),
+              //     );
+              //   },
+              // ),
               ListTile(
                 title: Text('Sair'),
                 onTap: () {
@@ -399,6 +367,11 @@ class _ScrCadastroCidadaoBState extends State<ScrCadastroCidadaoB> {
                         onChanged: (value) {
                           numero = value;
                         },
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(5),
+                        ],
                       ),
                     ),
                     SizedBox(height: 5),
@@ -564,10 +537,42 @@ class _ScrCadastroCidadaoBState extends State<ScrCadastroCidadaoB> {
                     SingleChildScrollView(
                       child: Column(
                         children: [
+                        Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
                           ElevatedButton(
                             onPressed: () {
-                              widget.cadastroUser(context);
                               setState(() {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ScrCadastroCidadaoA(
+                                        tipoUser: widget.tipoUser!,
+                                        nome: widget.nome!,
+                                        email: widget.email!,
+                                        senha: widget.senha!,
+                                      )
+                                  ),
+                                );
+                              });
+                            },
+                            style: ButtonStyle(
+                              backgroundColor:
+                              MaterialStateProperty.all(Colors.indigo),
+                              fixedSize:
+                              MaterialStateProperty.all(Size(150, 50)),
+                            ),
+                            child: Text(
+                              'Voltar',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() async {
                                 showError = false;
                                 if (cepController.text.isEmpty ||
                                     logradouroController.text.isEmpty ||
@@ -590,6 +595,7 @@ class _ScrCadastroCidadaoBState extends State<ScrCadastroCidadaoB> {
                                   showErrorCidade = false;
                                   showErrorEstado = false;
                                   finalizarCadastroCidadao();
+                                  await widget.loginUser(context);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -601,20 +607,22 @@ class _ScrCadastroCidadaoBState extends State<ScrCadastroCidadaoB> {
                             },
                             style: ButtonStyle(
                               backgroundColor:
-                                  MaterialStateProperty.all(Colors.white),
+                                MaterialStateProperty.all(Colors.lightGreen[800]),
                               fixedSize:
-                                  MaterialStateProperty.all(Size(200, 50)),
+                                MaterialStateProperty.all(Size(150, 50)),
                             ),
                             child: Text(
                               'Finalizar',
                               style: TextStyle(
-                                color: Colors.blue,
+                                color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ],
+                              ),
+    ],
                       ),
                     ),
                   ],

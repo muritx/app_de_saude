@@ -152,13 +152,13 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
                       ),
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 18),
                     Padding(
-                      padding: EdgeInsets.only(top: 20, bottom: 20),
+                      padding: EdgeInsets.only(top: 10, bottom: 1),
                       child: Text(
                         'Para qual a secretaria deseja abrir a reclamação?',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 18,
                           color: Colors.white,
                         ),
                       ),
@@ -204,11 +204,11 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                       ),
                     SizedBox(height: 20),
                     Padding(
-                      padding: EdgeInsets.only(top: 20, bottom: 20),
+                      padding: EdgeInsets.only(top: 10, bottom: 1),
                       child: Text(
                         'Qual a Unidade de Saúde está relacionada?',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 18,
                           color: Colors.white,
                         ),
                       ),
@@ -254,11 +254,11 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                       ),
                     SizedBox(height: 20),
                     Padding(
-                      padding: EdgeInsets.only(top: 20, bottom: 20),
+                      padding: EdgeInsets.only(top: 10, bottom: 1),
                       child: Text(
                         'Sua reclamação está relacionada a qual tipo de serviço?',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 18,
                           color: Colors.white,
                         ),
                       ),
@@ -304,11 +304,11 @@ class _ScrAberturaReclBState extends State<ScrAberturaReclB> {
                       ),
                     SizedBox(height: 20),
                     Padding(
-                      padding: EdgeInsets.only(top: 20, bottom: 20),
+                      padding: EdgeInsets.only(top: 10, bottom: 1),
                       child: Text(
                         'Existe alguma empresa terceirizada envolvida na reclamação?',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 18,
                           color: Colors.white,
                         ),
                       ),
